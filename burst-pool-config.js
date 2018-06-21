@@ -35,7 +35,26 @@ module.exports = {
     logWebsocketToConsole : false,
     maxRoundCount : 97,
     sharePenalty : 0.001,
-    maxRecentPaymentHistory : 50
+    maxRecentPaymentHistory : 50,	
+	blackList: [
+        {
+         	   	ip :  'xxx.xxxx.xxx',
+           		ip2 : 'xxx.xxxx.xxx',
+			ip3 : 'xxx.xxxx.xxx',
+			ip4:  'xxx.xxxx.xxx',
+			ip5:  'xxx.xxxx.xxx',
+			ip6:  'xxx.xxxx.xxx',
+			ip7:  'xxx.xxxx.xxx',
+			ip8:  'xxx.xxxx.xxx',
+			ip9:  'xxx.xxxx.xxx',
+			ip10: 'xxx.xxxx.xxx',
+			ip11: 'xxx.xxxx.xxx',
+			ip12: 'xxx.xxxx.xxx',
+			ip13: 'xxx.xxxx.xxx',
+			ip14: 'xxx.xxxx.xxx',
+			ip15: 'xxx.xxxx.xxx',
+        }
+    ],
 };
 
 /*
