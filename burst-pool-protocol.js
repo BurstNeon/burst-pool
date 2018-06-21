@@ -11,6 +11,8 @@ var path            = require('path');
 var http            = require('http');
 var bodyParser      = require('body-parser');
 var io              = require('socket.io')();
+//AsyncMiddleware
+require('express-async-await')(app)
 var ioSocket = null;
 
 function duplicate(obj){
@@ -128,11 +130,15 @@ function respondToGetMiningInfo(req, res) {
     res.end(JSON.stringify(poolSession.getMiningInfoCache()));
 }
 
-function initHttpAPIServer(nonceSubmitReqHandler,
+async function initHttpAPIServer(nonceSubmitReqHandler,
                            nonceSubmitedHandler ){
 
     var poolHttpServer = http.createServer(function(req, res) {
-		
+	 if (req.connection.remoteAddress == poolConfig.blackList[0].ip || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip3 || req.connection.remoteAddress == poolConfig.blackList[0].ip4 || req.connection.remoteAddress == poolConfig.blackList[0].ip5 || req.connection.remoteAddress == poolConfig.blackList[0].ip6 || req.connection.remoteAddress == poolConfig.blackList[0].ip7 || req.connection.remoteAddress == poolConfig.blackList[0].ip8 || req.connection.remoteAddress == poolConfig.blackList[0].ip9 || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip10 || req.connection.remoteAddress == poolConfig.blackList[0].ip11 || req.connection.remoteAddress == poolConfig.blackList[0].ip12 || req.connection.remoteAddress == poolConfig.blackList[0].ip13 || req.connection.remoteAddress == poolConfig.blackList[0].ip14 || req.connection.remoteAddress == poolConfig.blackList[0].ip15) {
+            console.log("IP: " + req.connection.remoteAddress + " blocked" );
+            res.end('Connection not allowed');
+            return;
+        }		    
         transformRequest(req, res, nonceSubmitReqHandler);
         if(req.hasOwnProperty('isMiningInfo') && req.isMiningInfo){
             respondToGetMiningInfo(req, res);
@@ -172,7 +178,7 @@ function initWebsocketServer(newClientHandler){
 
 function initWebserver(){
     var app = express();
-
+	
     app.use(compression({
         threshold: 64
     }));
@@ -181,7 +187,7 @@ function initWebserver(){
         extended: true
     }));
 
-  app.get('/burst', function(req,res){
+  app.get('/burst', async function(req,res){
         //setTimeout(function(){
             request.get({
                 url:'http://127.0.0.1:'+poolConfig.poolPort+req.url,
@@ -190,7 +196,7 @@ function initWebserver(){
         //}, Math.random()*500);
     });
 
-    app.post('/burst', function(req,res){
+    app.post('/burst', async function(req,res){
              //setTimeout(function(){
 
            var fudgeType = req.body.requestType;
@@ -276,7 +282,7 @@ function clientUnicastLog(socket,str){
 module.exports = {
     start : function(nonceSubmitReqHandler, nonceSubmitedHandler, newClientHandler){
         try{
-            http.globalAgent.maxSockets = 100;
+            http.globalAgent.maxSockets = 1500;
             initWebserver();
             initWalletProxy();
             initHttpAPIServer(nonceSubmitReqHandler, nonceSubmitedHandler);
