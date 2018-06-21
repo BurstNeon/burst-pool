@@ -6,6 +6,20 @@ module.exports = {
             walletUrl : 'http://127.0.0.1:8125'
         }
     ],
+    wallets2 : [
+        {
+            walletIP : '127.0.0.1',
+            walletPort : 8126,
+            walletUrl : 'http://127.0.0.1:8126'
+        }
+    ],
+    wallets3 : [
+        {
+            walletIP : '127.0.0.1',
+            walletPort : 8127,
+            walletUrl : 'http://127.0.0.1:8127'
+        }
+    ],
     redirection : {
         enabled : false,
         target : 'http://lhc.ddns.net:8124'
