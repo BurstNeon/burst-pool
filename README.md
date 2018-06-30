@@ -11,9 +11,9 @@ Update V5:
 
 | Setting | Description |
 | --- | --- |
-|"wallets" | local wallets access (alternative possible over online wallet, but increase workload) |
-|"mainWallet" | local wallet for main work (alternative possible over online wallet, but increase workload) |
-|"alternativeWallet" | local wallet for work, if main wallet busy (alternative possible over online wallet, but increase workload) |
+|"wallets" | local wallets access (alternative possible with external wallet, but increase workload) |
+|"mainWallet" | local wallet for main work (alternative possible with external wallet, but increase workload) |
+|"alternativeWallet" | local wallet for work, if main wallet busy (alternative possible with external wallet, but increase workload) |
 |"apiCallWallet" | local wallet for api calls and payouts (alternative possible over online wallet, but increase workload) |
 |"blackList" | IP-Address which attract attention and locked out of request progress|
 |"devFee"   | that if enabled would send [devFeePercent] of the pools earnings as a developer fee to myself after a few requests of people wanting to support the project. 1% works out to be less than 25 coins. getting lower each month. |
