@@ -2,9 +2,9 @@ This is a redesigned version of the pool software for the cryptocurrency Burstco
 
 Update V5:
 - Added a server workload rule
-- Compatible for all Node versions
-- Use of multiple wallets
-- Added by blacklists on multiple floods of wallets
+- Compatibility for all Node versions
+- Using of multiple wallets
+- Added blacklists for multiple flooding of wallets
 
 
 **Config**
