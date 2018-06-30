@@ -12,7 +12,7 @@ var http            = require('http');
 var bodyParser      = require('body-parser');
 var io              = require('socket.io')();
 var ioSocket = null;
-var toobusy = require('toobusy-js')
+var toobusy = require('node-toobusy');
 function duplicate(obj){
     return JSON.parse(JSON.stringify(obj));
 }
