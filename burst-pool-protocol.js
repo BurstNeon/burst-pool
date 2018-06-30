@@ -25,15 +25,15 @@ function initWalletProxy() {
     for (var i = 0; i < poolConfig.wallets.length; i++) {
       if (poolConfig.wallets[0].walletUrl != 'undefined') {
         poolConfig.wallets[i].proxy = httpProxy.createProxyServer({});
-        console.log("Wallet 1 is started" + poolConfig.wallets[0].walletUrl);
+        console.log("Wallet 1 is started " + poolConfig.wallets[0].walletUrl);
       }
       if (poolConfig.wallets2[0].walletUrl != 'undefined') {
         poolConfig.wallets2[0].proxy = httpProxy.createProxyServer({});
-        console.log("Wallet 2 is started" + poolConfig.wallets2[0].walletUrl);
+        console.log("Wallet 2 is started " + poolConfig.wallets2[0].walletUrl);
       }
 	   if (poolConfig.wallets3[0].walletUrl != 'undefined') {
         poolConfig.wallets3[0].proxy = httpProxy.createProxyServer({});
-        console.log("Wallet 3 is started" + poolConfig.wallets3[0].walletUrl);
+        console.log("Wallet 3 is started " + poolConfig.wallets3[0].walletUrl);
       }
         poolConfig.wallets[0].proxy.on('error', function (err, req, res) {
             console.log(err);
