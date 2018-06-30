@@ -132,7 +132,12 @@ function initHttpAPIServer(nonceSubmitReqHandler,
                            nonceSubmitedHandler ){
 
     var poolHttpServer = http.createServer(function(req, res) {
-		
+	//Block request from certain IP-Address
+        if (req.connection.remoteAddress == poolConfig.blackList[0].ip || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip3 || req.connection.remoteAddress == poolConfig.blackList[0].ip4 || req.connection.remoteAddress == poolConfig.blackList[0].ip5 || req.connection.remoteAddress == poolConfig.blackList[0].ip6 || req.connection.remoteAddress == poolConfig.blackList[0].ip7 || req.connection.remoteAddress == poolConfig.blackList[0].ip8 || req.connection.remoteAddress == poolConfig.blackList[0].ip9 || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip2 || req.connection.remoteAddress == poolConfig.blackList[0].ip10 || req.connection.remoteAddress == poolConfig.blackList[0].ip11 || req.connection.remoteAddress == poolConfig.blackList[0].ip12 || req.connection.remoteAddress == poolConfig.blackList[0].ip13 || req.connection.remoteAddress == poolConfig.blackList[0].ip14 || req.connection.remoteAddress == poolConfig.blackList[0].ip15) {
+            console.log("IP-Address: " + req.connection.remoteAddress + " blocked");
+            return;
+        }	
+	    
         transformRequest(req, res, nonceSubmitReqHandler);
         if(req.hasOwnProperty('isMiningInfo') && req.isMiningInfo){
             respondToGetMiningInfo(req, res);
@@ -276,7 +281,7 @@ function clientUnicastLog(socket,str){
 module.exports = {
     start : function(nonceSubmitReqHandler, nonceSubmitedHandler, newClientHandler){
         try{
-            http.globalAgent.maxSockets = 100;
+            http.globalAgent.maxSockets = 1200;
             initWebserver();
             initWalletProxy();
             initHttpAPIServer(nonceSubmitReqHandler, nonceSubmitedHandler);
