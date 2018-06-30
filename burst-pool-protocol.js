@@ -12,7 +12,7 @@ var http            = require('http');
 var bodyParser      = require('body-parser');
 var io              = require('socket.io')();
 var ioSocket = null;
-
+var toobusy = require('toobusy-js')
 function duplicate(obj){
     return JSON.parse(JSON.stringify(obj));
 }
@@ -20,24 +20,64 @@ function clientLogFormatted(str){
     ioSocket.emit('log',str);
 }
 
-function initWalletProxy(){
-    for(var i=0 ; i<poolConfig.wallets.length ; i++){
+function initWalletProxy() {
+
+    for (var i = 0; i < poolConfig.wallets.length; i++) {
+      if (poolConfig.wallets[0].walletUrl != 'undefined') {
         poolConfig.wallets[i].proxy = httpProxy.createProxyServer({});
-        poolConfig.wallets[i].proxy.on('error', function (err, req, res) {
+        console.log("Wallet 1 is started" + poolConfig.wallets[0].walletUrl);
+      }
+      if (poolConfig.wallets2[0].walletUrl != 'undefined') {
+        poolConfig.wallets2[0].proxy = httpProxy.createProxyServer({});
+        console.log("Wallet 2 is started" + poolConfig.wallets2[0].walletUrl);
+      }
+	   if (poolConfig.wallets3[0].walletUrl != 'undefined') {
+        poolConfig.wallets3[0].proxy = httpProxy.createProxyServer({});
+        console.log("Wallet 3 is started" + poolConfig.wallets3[0].walletUrl);
+      }
+        poolConfig.wallets[0].proxy.on('error', function (err, req, res) {
             console.log(err);
-            res.writeHead(500, { 'Content-Type': 'text/plain'});
+            //res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal Server Error, or Resource Temporary Unavailable');
+        })
+        poolConfig.wallets2[0].proxy.on('error', function (err, req, res) {
+            console.log(err);
+            //res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal Server Error, or Resource Temporary Unavailable');
+        })
+		 poolConfig.wallets3[0].proxy.on('error', function (err, req, res) {
+            console.log(err);
+            //res.writeHead(500, { 'Content-Type': 'text/plain' });
             res.end('Internal Server Error, or Resource Temporary Unavailable');
         });
     }
 }
 
-function proxify(req, res){
-    if(poolConfig.walletIndex < poolConfig.wallets.length){
-        try{
-            var proxy = poolConfig.wallets[poolSession.getWalletNdx()].proxy;
-            proxy.web(req, res, { target: poolConfig.wallets[poolSession.getWalletNdx()].walletUrl });
+function proxify(req, res, mod) {
+
+    if (poolConfig.walletIndex < poolConfig.wallets.length) {
+        try {
+          if (mod == 0) {
+            //console.log("wallet 1 ");
+                var proxy = poolConfig.wallets[0].proxy;
+                proxy.web(req, res, { target: poolConfig.wallets[0].walletUrl});
+
+
+          } if(mod == 1) {
+            //console.log("wallet 2 ");
+            var proxy2 = poolConfig.wallets2[0].proxy;
+            proxy2.web(req, res, { target: poolConfig.wallets2[0].walletUrl});
+
+
+        } if(mod == 2) {
+            //console.log("wallet 3 ");
+            var proxy3 = poolConfig.wallets3[0].proxy;
+            proxy3.web(req, res, { target: poolConfig.wallets3[0].walletUrl});
+
+
         }
-        catch(e){
+      }
+        catch (e) {
             console.log('exception while proxify');
             console.log(e);
             console.trace();
@@ -139,13 +179,27 @@ function initHttpAPIServer(nonceSubmitReqHandler,
         }	
 	    
         transformRequest(req, res, nonceSubmitReqHandler);
-        if(req.hasOwnProperty('isMiningInfo') && req.isMiningInfo){
+        if (req.hasOwnProperty('isMiningInfo') && req.isMiningInfo) {
             respondToGetMiningInfo(req, res);
         }
-        else{
-            transformResponse(req,res, nonceSubmitedHandler);
-            proxify(req,res);
-        }
+        else if (req.hasOwnProperty('isSubmitNonce')) {
+	 if (!toobusy()) {
+            transformResponse(req, res, nonceSubmitedHandler);
+            proxify(req, res, poolConfig.mainWallet);
+	 } else { 
+	    transformResponse(req, res, nonceSubmitedHandler);
+            proxify(req, res, poolConfig.alternativeWallet);
+	 }
+        } else if (req.hasOwnProperty('ApprovedProxifyRequest')) {
+	 if (!toobusy()) {
+            transformResponse(req, res, nonceSubmitedHandler);
+            proxify(req, res, poolConfig.mainWallet);
+	 } else {
+	    transformResponse(req, res, nonceSubmitedHandler);
+            proxify(req, res, poolConfig.alternativeWallet);
+	 }
+
+        } 
     });
 
     poolHttpServer.listen(poolConfig.poolPort,"0.0.0.0");
@@ -177,7 +231,19 @@ function initWebsocketServer(newClientHandler){
 
 function initWebserver(){
     var app = express();
-
+    // Set maximum lag to an aggressive value.
+	toobusy.maxLag(10);
+ 
+	// Set check interval to a faster value. This will catch more latency spikes
+	// but may cause the check to be too sensitive.
+	toobusy.interval(250);
+ 
+	// Get current maxLag or interval setting by calling without parameters.
+	var currentMaxLag = toobusy.maxLag(), interval = toobusy.interval();
+ 
+	toobusy.onLag(function(currentLag) {
+  		console.log("Event loop lag detected! Latency: " + currentLag + "ms");
+	});
     app.use(compression({
         threshold: 64
     }));
