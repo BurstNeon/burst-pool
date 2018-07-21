@@ -253,16 +253,16 @@ function initWebserver(){
     }));
 
   app.get('/burst', function(req,res){
-        //setTimeout(function(){
+        setTimeout(function(){
             request.get({
                 url:'http://127.0.0.1:'+poolConfig.poolPort+req.url,
                 method : 'GET'
             }).on('error',(err)=>{console.log("Fail! "+err)}).pipe(res);
-        //}, Math.random()*500);
+        }, sleep(Math.random() * 1000)); // 1 seconds
     });
 
     app.post('/burst', function(req,res){
-             //setTimeout(function(){
+             setTimeout(function(){
 
            var fudgeType = req.body.requestType;
             if(fudgeType === 'submitNonce' || fudgeType ==='getMiningInfo'){
@@ -281,7 +281,7 @@ function initWebserver(){
                            res.send('submitNonce & getMiningInfo API Call Only');
 
                    }
-               //}, Math.random()*500);
+               }, sleep(Math.random() * 1000)); // 1 seconds
     });
     app.use(function(req, res, next) {
         res.send('404 Not Found');
@@ -293,6 +293,14 @@ function initWebserver(){
     });
 }
 
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
 function consoleJson(json){
     try{
         console.log(jsonFormat.render(json));
